@@ -1,9 +1,21 @@
+#define LED_PIN 11
+
+
 void setup() {
-  // put your setup code here, to run once:
 
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void writeToAnalogPin(int percentage){
+  analogWrite(LED_PIN, i);
+  delay(5);
+}
 
+void loop() {
+  // Fade LED from on to off using PWM
+  for (int i = 0; i <= 255; i++){
+    writeToAnalogPin(i);
+  }
+  for (int i = 255; i >= 0; i--){
+    writeToAnalogPin(i);
+  }
 }
