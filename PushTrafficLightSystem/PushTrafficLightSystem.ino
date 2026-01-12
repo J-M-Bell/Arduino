@@ -10,7 +10,12 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(YELLOW_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
+
   pinMode(BUTTON_PIN, INPUT);
+
+  pinMode(RED_PIN, LOW);
+  pinMode(YELLOW_PIN, LOW);
+  PinMode(GREEN_PIN, LOW);
 }
 
 void loop() {
