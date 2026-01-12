@@ -4,21 +4,30 @@
 #define YELLOW_PIN 11
 #define GREEN_PIN 10
 
+#define LED_PIN_COUNT 3
+
 int LEDBlinkState = 1;
 
+byte LEDPins[LED_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
+
 void setup() {
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(YELLOW_PIN, OUTPUT);
-  pinMode(GREEN_PIN, OUTPUT);
-
-  pinMode(BUTTON_PIN, INPUT);
-
-  pinMode(RED_PIN, LOW);
-  pinMode(YELLOW_PIN, LOW);
-  PinMode(GREEN_PIN, LOW);
+  setLEDPins();
 }
 
 void loop() {
+  toggleLEDState();
+}
+
+void setLEDPins() {
+  pinMode(BUTTON_PIN, INPUT);
+
+  for (byte pin : LEDPins) {
+    pinMode(pin, OUTPUT);
+    pinMode(pin, LOW);
+  }
+}
+
+void toggleLEDState() {
   if (digitalRead(BUTTON_PIN) == LOW) {
     if (LEDBlinkState == 1) {
       // red and green on, yellow off
@@ -37,3 +46,4 @@ void loop() {
     delay(300);
   }
 }
+
