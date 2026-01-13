@@ -1,6 +1,7 @@
 #define RED_PIN 12
 
-int delayValue = 100;
+int blinkDelay = 100;
+int LEDState = LOW;
 
 void setup() {
   Serial.begin(9600);
@@ -12,14 +13,17 @@ void setup() {
 
 void loop() {
   if (Serial.available() > 0) {
-    int numberFromSerial = Serial.parseInt();
-    if (numberFromSerial >= 100 && numberFromSerial <= 1000) {
-      delayValue = numberFromSerial;
+    int data = Serial.parseInt();
+    if (data >= 100 && data <= 1000) {
+      blinkDelay = data;
     }
   }
-  Serial.println(delayValue);
-  digitalWrite(RED_PIN, HIGH);
-  delay(delayValue);
-  digitalWrite(RED_PIN, LOW);
-  delay(delayValue);
+  if (LEDState == LOW) {
+    LEDState = HIGH;
+  }
+  else {
+    LEDState = LOW;
+  }
+  pinMode(RED_PIN, LEDState);
+  delay(blinkDelay);
 }
