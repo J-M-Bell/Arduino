@@ -1,6 +1,6 @@
 #define RED_PIN 12
 
-unsigned long previousTimeSerialInput = millis();
+unsigned long timeCounter = millis();
 unsigned long timeIntervalSerialInput = 100;
 int LEDState = LOW;
 
@@ -21,7 +21,7 @@ void loop() {
       timeIntervalSerialInput = data;
     }
   }
-  if (timeNow - previousTimeSerialInput > timeIntervalSerialInput) {
+  if (timeNow - timeCounter > timeIntervalSerialInput) {
     if (LEDState == LOW) {
       LEDState = HIGH;
     }
@@ -29,6 +29,6 @@ void loop() {
       LEDState = LOW;
     }
     digitalWrite(RED_PIN, LEDState);
-    previousTimeSerialInput += timeIntervalSerialInput;
+    timeCounter += timeIntervalSerialInput;
   }
 }
