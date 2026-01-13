@@ -5,8 +5,8 @@
 #define POTENTIOMETER_PIN A2
 #define BUTTON_PIN 2
 
-#define INPUT_PIN_COUNT 3
-#define OUTPUT_PIN_COUNT 2
+#define OUTPUT_PIN_COUNT 3
+#define INPUT_PIN_COUNT 2
 
 
 unsigned long timeCounter = millis();
@@ -14,19 +14,19 @@ unsigned long timeIntervalSerialInput = 100;
 
 int LEDState = LOW;
 
-byte inputPins[INPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
-byte outputPins[OUTPUT_PIN_COUNT] = {POTENTIOMETER_PIN, BUTTON_PIN};
+byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
+byte inputPins[INPUT_PIN_COUNT] = {POTENTIOMETER_PIN, BUTTON_PIN};
 
-void setInputPins() {
-  for (byte inputPin : inputPins) {
-    pinMode(inputPin, OUTPUT);
-    pinMode(inputPin, LOW);
+void setOutputPins() {
+  for (byte outputPin : outputPins) {
+    pinMode(outputPin, OUTPUT);
+    pinMode(outputPin, LOW);
   }
 }
 
 void setOutputPins() {
-  for (byte outputPin : outputPins) {
-    pinMode(outputPin, INPUT);
+  for (byte inputPin : inputPins) {
+    pinMode(inputPin, INPUT);
   }
 }
 
