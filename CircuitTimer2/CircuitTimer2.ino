@@ -24,7 +24,7 @@ void setOutputPins() {
   }
 }
 
-void setOutputPins() {
+void setInputPins() {
   for (byte inputPin : inputPins) {
     pinMode(inputPin, INPUT);
   }
