@@ -14,7 +14,8 @@ void setup() {
 }
 
 /**
- * @brief Thsi program 
+ * @brief This program toggles the Red LED and the brightness of the Green LED
+ * depending on luminosity of the room and the luminosity threshold.
  * 
  */
 void loop() {
