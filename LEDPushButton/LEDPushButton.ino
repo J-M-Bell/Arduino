@@ -1,6 +1,10 @@
 #define BUTTON_PIN 2
 #define LED_PIN 11
 
+/**
+ * @brief Sets up the serial and the pins.
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   pinMode(BUTTON_PIN, INPUT);
