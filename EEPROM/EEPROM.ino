@@ -9,11 +9,17 @@
 //int maxIntensity = 255;
 byte maxIntensity;
 
+/**
+ * @brief Sets up serial, pins, and max brightness from EEPROM.
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(GREEN_PIN, LOW);
+
+  // get max brightness from EEPROM
   maxIntensity = EEPROM.read(MAX_BRIGHTNESS_ADDRESS);
   if (maxIntensity == 0) {
     maxIntensity = MAX_BIGHTNESS_DEFAULT;
@@ -22,16 +28,24 @@ void setup() {
   Serial.println(maxIntensity);
 }
 
+/**
+ * @brief This program uses the values from the potentiometer to control the 
+ * brightness of the LED and store the potentiometer value in EEPROM to be read if the
+ * Arduino resets.
+ * 
+ */
 void loop() {
-  // get max intensity from serial
-  if (Serial.available() > 0) {
+  if (Serial.available() > 0) { // get max intensity from serial
     int data = Serial.parseInt();
     if (data >= 1 && data <= 255) {
       maxIntensity = data;
+
       // save max intensity to EEPROM
       Serial.print("The max intensity is now: ");
       Serial.println(maxIntensity);
       EEPROM.write(MAX_BRIGHTNESS_ADDRESS, maxIntensity);
+
+      // read value from EEPROM (debugging)
       int memoryValue = EEPROM.read(MAX_BRIGHTNESS_ADDRESS);
       Serial.print("The value saved is: ");
       Serial.println(memoryValue);
