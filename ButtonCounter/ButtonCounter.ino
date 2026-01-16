@@ -1,10 +1,16 @@
 #define BUTTON_PIN 2
 
+// push button variables
 int pushButtonCounter = 0;
 volatile int buttonPressed = false;
 volatile lastTimeButtonPressed = millis();
 int buttonDelay = 50;
 
+/**
+ * @brief This interrupt is triggered when a button is pressed
+ * to be used for a button counter
+ * 
+ */
 void buttonPressedInterrupt() {
   unsigned long timeNow = millis();
   if (timeNow - lastTimeButtonPressed > buttonDelay) {
@@ -12,6 +18,11 @@ void buttonPressedInterrupt() {
   }
   
 }
+
+/**
+ * @brief Sets up Serial, interrupts, and a pin.
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
@@ -21,6 +32,11 @@ void setup() {
   pinMode(BUTTON_PIN, INPUT);
 }
 
+/**
+ * @brief This program counts how many times a button
+ * has been pressed.
+ * 
+ */
 void loop() {
   if (buttonPressed) {
     buttonPressed = false;
