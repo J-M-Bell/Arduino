@@ -25,15 +25,10 @@ void triggerUltrasonicSensor() {
  */
 double getUltrasonicDistance() {
   // get duration of pulse
-  unsigned long pulseStart = millis();
-  double duration = pulseIn(ECHO_PIN, HIGH);
-  unsigned long pulseEnd = millis();
   double pulseDuration = pulseEnd - pulseStart;
-
-  //print and return distance
   Serial.print("The pulse duration is: ");
   Serial.println(pulseDuration);
-  double distance = duration / 58.0;
+  double distance = pulseDuration / 58.0;
   // distance = duration * speed
   // 340 m/s --> 0.034 cm/microseconds
   // duration * 0.034
