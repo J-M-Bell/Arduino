@@ -1,0 +1,112 @@
+@startuml Archer Financial Class Diagram
+
+'groups two or more similar arrows together
+skinparam groupInheritance 2
+
+'Classes
+class LED 
+{
+    constants
+    -RED_PIN 12
+    -YELLOW_PIN 11
+    -GREEN_PIN 10
+
+    -String LEDState
+    -String[] LEDStates
+    -unsigned long lastTimeBlinked
+    -int blinkDelay
+
+
+    #void setUpLED(String command)
+    #void blinkYellowByDistance(double distance)
+    #void controlBrightnessByLuminosity(int luminosity)
+    #void lockLEDs()
+    #void unlockLEDs()
+
+}
+
+class PushButton 
+{
+    constants
+    -BUTTON_PIN 2
+    
+    variables
+    -unsigned long debounceTimer
+    -int buttonDelay
+
+    #void setUpPushButton()
+    #void unlockBot()
+}
+
+class UltraSonicSensor
+{
+    constants
+    -ECHO_PIN 4
+    -TRIGGER_PIN 3
+
+    -unsigned long lastTimeSensorTriggered
+    -int sensorDelay
+    -volatile unsigned long pulseStart
+    -volatile unsigned long pulseEnd
+
+
+    #void setUpUltrasonicSensor()
+    #double getDistanceInCentimeters()
+    #double getDistanceInInches()
+    #void lockBot(double distance)
+    #void echoPinInterrupt()
+}
+
+class LCD
+{
+    constants
+    -RS_PIN
+    -E_PIN
+    -D4_PIN
+    -D5_PIN
+    -D6_PIN
+    -D7_PIN
+
+    variables
+    -String[] LCDStates
+    -String LCDState
+
+    #void setUpLCD()
+    #void printErrorMessageScreen()
+    #void printDefaultMessageScreen()
+    #void setDefaultSettings()
+    #void printDistanceinCentimetersScreen(double distance)
+    #void printDistanceInInchesScreen(double distance)
+    #void printLuminosityScreen(int luminosity)
+    #void printInitializingScreen() 
+
+    ' look into printing the loading LCD animation 
+}
+
+class Photoresistor
+{
+    constants
+    -PHOTORESISTOR_PIN
+
+    #int getLuminosity()
+}
+
+class Remote
+{
+    constants
+    -PLAY_BUTTON
+    -UP_BUTTON
+    -DOWN_BUTTON
+    -EQ_BUTTON
+    -OFF_BUTTON
+
+    #void setUpRemote()
+    #void unlockBot()
+    #void upButtonPressed()
+    #void downButtonPressed()
+    #void switchLCDScreens()
+    #void changeDefaultSettings()
+    #void resetDefaultSettings()
+    #void ~printCommands()
+
+}
