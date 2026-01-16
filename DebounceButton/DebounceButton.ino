@@ -7,20 +7,25 @@
 #define OUTPUT_PIN_COUNT 3
 #define INPUT_PIN_COUNT 1
 
+// program state variables
 int LEDBlinkState = LOW;
 int LEDToggleState = 1;
 int buttonState = LOW;
 
-
+// delay variables
 unsigned long LEDClock = millis();
-unsigned long clickTimeCounter = millis();
-
 int LEDTimeDelay = 1000;
+unsigned long clickTimeCounter = millis();
 int buttonTimeDelay = 50;
 
+// pin arrays
 byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
 byte inputPins[INPUT_PIN_COUNT] = {BUTTON_PIN};
 
+/**
+ * @brief Set the LED output pins.
+ * 
+ */
 void setOutputPins() {
   for (byte outputPin : outputPins) {
     pinMode(outputPin, OUTPUT);
@@ -28,12 +33,20 @@ void setOutputPins() {
   }
 }
 
+/**
+ * @brief Set the input pins.
+ * 
+ */
 void setInputPins() {
   for (byte inputPin : inputPins) {
     pinMode(inputPin, INPUT);
   }
 }
 
+/**
+ * @brief Set up serial and pins
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
@@ -41,6 +54,11 @@ void setup() {
   setOutputPins();
 }
 
+/**
+ * @brief This program toggles the green and yellow LED when the
+ * push button is pressed.
+ * 
+ */
 void loop() {
   unsigned long timeNow = millis();
 
@@ -60,7 +78,7 @@ void loop() {
   
   // pressed: (LOW -> HIGH): toggle LED 2 & 3
   // toggle LEDs: power on 2, power off 3
-  if (timeNow - clickTimeCounter > buttonTimeDelay) {
+  if (timeNow - clickTimeCounter > buttonTimeDelay) { // debounce button
     int newButtonState = digitalRead(BUTTON_PIN);
     if (newButtonState != buttonState) {
       clickTimeCounter = timeNow;
