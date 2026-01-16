@@ -7,8 +7,13 @@
 
 #define OUTPUT_PIN_COUNT 3
 
+// pin array
 byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
 
+/**
+ * @brief Set the Output Pins
+ * 
+ */
 void setOutputPins() {
   for (byte outputPin : outputPins) {
     pinMode(outputPin, OUTPUT);
@@ -16,16 +21,21 @@ void setOutputPins() {
   }
 }
 
+// Ultrasonic sensor time delay variables
 unsigned long lastTimeUltrasonicTrigger = micros();
 unsigned long pulseDelay = 60;
-
 volatile unsigned long pulseStart;
 volatile unsigned long pulseEnd;
 
+// Ultrasonic sensor distance variables
 volatile bool newDistanceAvailable = false;
-
 double objectDistance;
 
+/**
+ * @brief This method triggers the Ultrasonic sensor by sending
+ * a pulse to the trigger pin.
+ * 
+ */
 void triggerUltrasonicSensor() {
   digitalWrite(TRIGGER_PIN, LOW);
   delayMicroseconds(2);
@@ -34,6 +44,13 @@ void triggerUltrasonicSensor() {
   digitalWrite(TRIGGER_PIN, LOW);
 }
 
+/**
+ * @brief This method calculates the distance of an object
+ * from the Ultrasonic sensor by using the duration of the
+ * returning signal.
+ * 
+ * @return double the distance of the object from the sensor.
+ */
 double getUltrasonicDistance() {
   double pulseDuration = pulseEnd - pulseStart;
   Serial.print("The pulse duration is: ");
@@ -45,6 +62,11 @@ double getUltrasonicDistance() {
   return distance;
 }
 
+/**
+ * @brief This interrupt calculates the duration of the pulse
+ * to the Ultrasonic sensor.
+ * 
+ */
 void echoPinInterrupt() {
   if (digitalRead(ECHO_PIN) == HIGH) {
     pulseStart = micros();
@@ -55,6 +77,10 @@ void echoPinInterrupt() {
   }
 }
 
+/**
+ * @brief Sets up serial, Ultrasonic sensor pins, and interrupt.
+ * 
+ */
 void setup() {
  Serial.begin(9600);
  Serial.setTimeout(10);
@@ -66,26 +92,31 @@ void setup() {
                 CHANGE);
 }
 
+/**
+ * @brief This program powers different LEDs depending on the distance an object
+ * is from the Ultrasonic sensor.
+ * 
+ */
 void loop() {
   unsigned long timeNow = micros();
-  if (timeNow - lastTimeUltrasonicTrigger > pulseDelay) {
+  if (timeNow - lastTimeUltrasonicTrigger > pulseDelay) { // delay object detection for smoother reading
     lastTimeUltrasonicTrigger += pulseDelay;
     triggerUltrasonicSensor();
-    if (newDistanceAvailable) {
+    if (newDistanceAvailable) { // object has been detected
       newDistanceAvailable = false;
       objectDistance = getUltrasonicDistance();
       Serial.println(objectDistance);
-      if (objectDistance > 100) { // distance > 100 cm -> Green LED
+      if (objectDistance > 100) { // distance > 100 cm -> power Green LED
       digitalWrite(GREEN_PIN, HIGH);
       digitalWrite(YELLOW_PIN, LOW);
       digitalWrite(RED_PIN, LOW);
       }
-      else if (objectDistance >= 15 && objectDistance <= 100) { // distance 15-100 cm -> Yellow LED
+      else if (objectDistance >= 15 && objectDistance <= 100) { // distance 15-100 cm -> power Yellow LED
         digitalWrite(GREEN_PIN, LOW);
         digitalWrite(YELLOW_PIN, HIGH);
         digitalWrite(RED_PIN, LOW);
       }
-      else { // distance < 15cm -> Red LED
+      else { // distance < 15cm -> power Red LED
         digitalWrite(GREEN_PIN, LOW);
         digitalWrite(YELLOW_PIN, LOW);
         digitalWrite(RED_PIN, HIGH);
@@ -93,5 +124,4 @@ void loop() {
     }
     
   }
-
 }
