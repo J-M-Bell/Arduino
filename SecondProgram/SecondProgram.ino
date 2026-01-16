@@ -1,8 +1,16 @@
+/**
+ * @brief Sets up pin.
+ * 
+ */
 void setup() {
   // Set LED pin to OUTPUT
   pinMode(12, OUTPUT);
 }
 
+/**
+ * @brief This program blinks the LED every second.
+ * 
+ */
 void loop() {
   // // Toggle the LED blicking on board
   digitalWrite(12, HIGH);
