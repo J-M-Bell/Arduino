@@ -17,6 +17,10 @@ int LEDState = LOW;
 byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
 byte inputPins[INPUT_PIN_COUNT] = {POTENTIOMETER_PIN, BUTTON_PIN};
 
+/**
+ * @brief Set the LED output pins.
+ * 
+ */
 void setOutputPins() {
   for (byte outputPin : outputPins) {
     pinMode(outputPin, OUTPUT);
@@ -24,12 +28,20 @@ void setOutputPins() {
   }
 }
 
+/**
+ * @brief Set the input pins.
+ * 
+ */
 void setInputPins() {
   for (byte inputPin : inputPins) {
     pinMode(inputPin, INPUT);
   }
 }
 
+/**
+ * @brief Set up serial and pins.
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
@@ -37,10 +49,16 @@ void setup() {
   setOutputPins();
 }
 
+/**
+ * @brief This program is responsible for blinking the Red LED at a rate
+ * specified by the user; control the brightness of the Yellow LED with the
+ * potentiometer; and power on the Green LED when the push button is pressed.
+ * 
+ */
 void loop() {
   unsigned long timeNow = millis();
   
-  // 1. get delay time from user if available
+  // 1. get delay time from user if condition is met
   if (Serial.available() > 0) {
     int data = Serial.parseInt();
     if (data >= 100 && data <= 1000) {
