@@ -25,7 +25,7 @@ void loop() {
 
   if (Serial.available() > 0) { // gets input from serial
     int data = Serial.parseInt();
-    if (data >= 100 && data <= 1000) {
+    if (data >= 100 && data <= 4000) {
       blinkDelay = data;
     }
   }
@@ -37,6 +37,6 @@ void loop() {
   else {
     LEDState = LOW;
   }
-  pinMode(RED_PIN, LEDState);
+  digitalWrite(RED_PIN, LEDState);
   delay(blinkDelay);
 }
