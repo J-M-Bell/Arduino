@@ -91,8 +91,9 @@ double getDistanceinInches() {
  */
 void lockBot(double distance) {
   // call 'lockLED' function
-
+  
   // call 'printErrorMessageScreen' function
+  printErrorMessageScreen();
 }
 
 /**
