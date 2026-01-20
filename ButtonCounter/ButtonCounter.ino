@@ -4,7 +4,7 @@
 int pushButtonCounter = 0;
 volatile bool buttonPressed = false;
 volatile unsigned long lastTimeButtonPressed = millis();
-int buttonDelay = 150;
+int buttonDelay = 200;
 
 /**
  * @brief This interrupt is triggered when a button is pressed
@@ -24,7 +24,7 @@ void buttonPressedInterrupt() {
  * 
  */
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.setTimeout(10);
   attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), 
                    buttonPressedInterrupt,
