@@ -15,6 +15,7 @@ void setUpPushButton() {
  */
 void unlockBot() {
   // call unlockLEDs()
-
-  // call printDistanceInCentimetersScreen() 
+  unlockLEDs();
+  // call printDistanceInCentimetersScreen()
+  printDistanceInCentimetersScreen();
 }
