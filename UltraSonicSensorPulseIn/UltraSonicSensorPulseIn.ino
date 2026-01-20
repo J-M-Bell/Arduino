@@ -5,6 +5,7 @@
 unsigned long lastTimeUltrasonicTrigger = millis();
 unsigned long pulseDelay = 100;
 
+
 /**
  * @brief This method triggers the Ultrasonic sensor by
  * sending a signal to it.
@@ -25,6 +26,9 @@ void triggerUltrasonicSensor() {
  */
 double getUltrasonicDistance() {
   // get duration of pulse
+  unsigned long pulseStart = millis();
+  double duration = pulseIn(ECHO_PIN, HIGH);
+  unsigned long pulseEnd = millis();
   double pulseDuration = pulseEnd - pulseStart;
   Serial.print("The pulse duration is: ");
   Serial.println(pulseDuration);
@@ -40,7 +44,7 @@ double getUltrasonicDistance() {
  * 
  */
 void setup() {
- Serial.begin(9600);
+ Serial.begin(115200);
  Serial.setTimeout(10);
  pinMode(ECHO_PIN, INPUT);
  pinMode(TRIGGER_PIN, OUTPUT);
