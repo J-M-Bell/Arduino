@@ -2,9 +2,9 @@
 
 // push button variables
 int pushButtonCounter = 0;
-volatile int buttonPressed = false;
-volatile lastTimeButtonPressed = millis();
-int buttonDelay = 50;
+volatile bool buttonPressed = false;
+volatile unsigned long lastTimeButtonPressed = millis();
+int buttonDelay = 150;
 
 /**
  * @brief This interrupt is triggered when a button is pressed
@@ -14,9 +14,9 @@ int buttonDelay = 50;
 void buttonPressedInterrupt() {
   unsigned long timeNow = millis();
   if (timeNow - lastTimeButtonPressed > buttonDelay) {
+    lastTimeButtonPressed = timeNow;
     buttonPressed = true;
   }
-  
 }
 
 /**
