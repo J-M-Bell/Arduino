@@ -15,12 +15,13 @@ LiquidCrystal lcd(LCD_RS_PIN, LCD_E_PIN, LCD_D4_PIN,
 #define TRIGGER_PIN 4
 
 // Ultrasonic sensor time delay variables
-unsigned long lastTimeUltrasonicTrigger = micros();
-unsigned long pulseDelay = 60;
+unsigned long lastTimeUltrasonicTrigger = millis();
+unsigned long pulseDelay = 100;
 volatile unsigned long pulseStart;
 volatile unsigned long pulseEnd;
 
-//
+//distance variables
+double previousDistance = 400.00;
 volatile bool newDistanceAvailable = false;
 double objectDistance;
 
@@ -50,6 +51,11 @@ double getUltrasonicDistance() {
   // distance = duration * speed
   // 340 m/s --> 0.034 cm/microseconds
   // duration * 0.034
+  if (distance < 2 || distance > 400.0) {
+    distance = previousDistance;
+    return distance;
+  }
+  previousDistance = distance;
   return distance;
 }
 
@@ -73,7 +79,7 @@ void echoPinInterrupt() {
  * 
  */
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.setTimeout(10);
   lcd.begin(16, 2);
   pinMode(ECHO_PIN, INPUT);
@@ -89,7 +95,7 @@ void setup() {
  * 
  */
 void loop() {
-  unsigned long timeNow = micros();
+  unsigned long timeNow = millis();
   if (timeNow - lastTimeUltrasonicTrigger > pulseDelay) { // delay distance reading
     lastTimeUltrasonicTrigger += pulseDelay;
     triggerUltrasonicSensor();
@@ -97,16 +103,17 @@ void loop() {
       // change distance state and get distance
       newDistanceAvailable = false;
       objectDistance = getUltrasonicDistance();
+      Serial.println(objectDistance);
 
       // print to LCD
       lcd.setCursor(0, 0);
       lcd.print("rate: ");
       lcd.print(pulseDelay);
-      lcd.print(" ms");
+      lcd.print(" ms.");
       lcd.setCursor(0, 1);
       lcd.print("distance: ");
       lcd.print(objectDistance);
-      lcd.print(" cm");
+      // lcd.print(" cm");
     }
   }
 }
