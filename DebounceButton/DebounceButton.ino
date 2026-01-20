@@ -16,7 +16,7 @@ int buttonState = LOW;
 unsigned long LEDClock = millis();
 int LEDTimeDelay = 1000;
 unsigned long clickTimeCounter = millis();
-int buttonTimeDelay = 50;
+int buttonTimeDelay = 150;
 
 // pin arrays
 byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
