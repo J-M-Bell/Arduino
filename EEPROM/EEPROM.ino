@@ -9,6 +9,10 @@
 //int maxIntensity = 255;
 byte maxIntensity;
 
+/**
+ * @brief Set max intensity from EEPROM address value.
+ * 
+ */
 void setMaxIntensity() {
   if (Serial.available() > 0) { // get max intensity from serial
     int data = Serial.parseInt();
@@ -28,6 +32,11 @@ void setMaxIntensity() {
   }
 }
 
+/**
+ * @brief This method is for changing the max brightness of
+ * an LED.
+ * 
+ */
 void fadeLED() {
   // LED on Pin 10 - fade in/out from potentiometer
   int potentiometerValue = analogRead(POTENTIOMETER_PIN);
