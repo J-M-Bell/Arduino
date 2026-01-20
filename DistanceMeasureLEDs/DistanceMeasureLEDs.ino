@@ -9,6 +9,7 @@
 
 // pin array
 byte outputPins[OUTPUT_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
+double previousDistance = 400.0;
 
 /**
  * @brief Set the Output Pins
@@ -22,8 +23,8 @@ void setOutputPins() {
 }
 
 // Ultrasonic sensor time delay variables
-unsigned long lastTimeUltrasonicTrigger = micros();
-unsigned long pulseDelay = 60;
+unsigned long lastTimeUltrasonicTrigger = millis();
+unsigned long pulseDelay = 100;
 volatile unsigned long pulseStart;
 volatile unsigned long pulseEnd;
 
@@ -59,7 +60,30 @@ double getUltrasonicDistance() {
   // distance = duration * speed
   // 340 m/s --> 0.034 cm/microseconds
   // duration * 0.034
+  if (distance > 400.0) {
+    distance = previousDistance;
+    return distance;
+  }
+  previousDistance = distance;
   return distance;
+}
+
+void powerOnLEDs() {
+  if (objectDistance > 100) { // distance > 100 cm -> power Green LED
+    digitalWrite(GREEN_PIN, HIGH);
+    digitalWrite(YELLOW_PIN, LOW);
+    digitalWrite(RED_PIN, LOW);
+  }
+  else if (objectDistance >= 15 && objectDistance <= 100) { // distance 15-100 cm -> power Yellow LED
+    digitalWrite(GREEN_PIN, LOW);
+    digitalWrite(YELLOW_PIN, HIGH);
+    digitalWrite(RED_PIN, LOW);
+  }
+  else { // distance < 15cm -> power Red LED
+    digitalWrite(GREEN_PIN, LOW);
+    digitalWrite(YELLOW_PIN, LOW);
+    digitalWrite(RED_PIN, HIGH);
+  }
 }
 
 /**
@@ -82,7 +106,7 @@ void echoPinInterrupt() {
  * 
  */
 void setup() {
- Serial.begin(9600);
+ Serial.begin(115200);
  Serial.setTimeout(10);
  pinMode(ECHO_PIN, INPUT);
  pinMode(TRIGGER_PIN, OUTPUT);
@@ -98,7 +122,7 @@ void setup() {
  * 
  */
 void loop() {
-  unsigned long timeNow = micros();
+  unsigned long timeNow = millis();
   if (timeNow - lastTimeUltrasonicTrigger > pulseDelay) { // delay object detection for smoother reading
     lastTimeUltrasonicTrigger += pulseDelay;
     triggerUltrasonicSensor();
@@ -106,21 +130,7 @@ void loop() {
       newDistanceAvailable = false;
       objectDistance = getUltrasonicDistance();
       Serial.println(objectDistance);
-      if (objectDistance > 100) { // distance > 100 cm -> power Green LED
-      digitalWrite(GREEN_PIN, HIGH);
-      digitalWrite(YELLOW_PIN, LOW);
-      digitalWrite(RED_PIN, LOW);
-      }
-      else if (objectDistance >= 15 && objectDistance <= 100) { // distance 15-100 cm -> power Yellow LED
-        digitalWrite(GREEN_PIN, LOW);
-        digitalWrite(YELLOW_PIN, HIGH);
-        digitalWrite(RED_PIN, LOW);
-      }
-      else { // distance < 15cm -> power Red LED
-        digitalWrite(GREEN_PIN, LOW);
-        digitalWrite(YELLOW_PIN, LOW);
-        digitalWrite(RED_PIN, HIGH);
-      }
+      powerOnLEDs();
     }
     
   }
