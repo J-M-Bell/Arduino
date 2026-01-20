@@ -15,7 +15,7 @@ int LCDState = 1;
 
 // Ultrasonic sensor time delay variables
 unsigned long lastTimeUltrasonicTrigger = micros();
-unsigned long pulseDelay = 60;
+unsigned long pulseDelay = 100;
 volatile unsigned long pulseStart;
 volatile unsigned long pulseEnd;
 
@@ -24,9 +24,10 @@ volatile unsigned long pulseEnd;
  * 
  */
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.setTimeout(10);
   lcd.begin(16, 2);
+  // lcd.print("Hello World!");
 }
 
 /**
@@ -46,6 +47,26 @@ double getUltrasonicDistance() {
 }
 
 /**
+ * @brief This method is for print the text to the LCD screen.
+ * 
+ * @param text String - text passed in from the user.
+ */
+void printToLCD(String text) {
+  if (LCDState == 1) {
+    LCDState = 0;
+  }
+  else {
+    LCDState = 1;
+  }
+  lcd.setCursor(0, LCDState);
+  for (int i = text.length(); i <= 15; i++) {
+    text += " ";
+  }
+  Serial.println(text);
+  lcd.print(text);
+}
+
+/**
  * @brief This program prints the text from the user to 
  * display on the LCD.
  * 
@@ -55,17 +76,7 @@ void loop() {
   if (Serial.available() > 0) {
     String text = Serial.readString();
     if (text.length() <= 16) {
-      if (LCDState == 1) {
-        LCDState = 0;
-      }
-      else {
-        LCDState = 1;
-      }
-      lcd.setCursor(0, LCDState);
-      for (int i = text.length(); i >= 16; i++) {
-        text += " ";
-      }
-      lcd.print(text);
+      printToLCD(text);
     }
   }
 }
