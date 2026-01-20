@@ -13,7 +13,9 @@ String LEDStates[2] = {"Locked", "Unlocked"};
 
 // LED Timer variables
 unsigned long lastTimeBlinked = millis();
+unsigned long lastTimeBlinkedForError = millis();
 int LEDDelay;
+int LEDErrorDelay = 300;
 
 /**
  * @brief Set up LED pins.
@@ -33,10 +35,16 @@ void setLEDs() {
  * @param distance - the distance an object is from the sensor.
  */
 void blinkYellowByDistance(double distance) {
+  digitalWrite(YELLOW_PIN, LOW);
   // get distance from Ultrasonic sensor continously
-
+  double distanceForLED = getUltrasonicDistance("cm");
   // calculate the time delay in proportion to the distance of the object
-
+  LEDDelay = 1600 / distanceForLED;
+  unsigned long timeNow = millis();
+  if (timeNow - lastTimeBlinked > LEDDelay) {
+    digitalWrite(YELLOW_PIN, HIGH);
+    lastTimeBlinked += LEDDelay;
+  }
   // blink Yellow LED using timer functionality
 }
 
@@ -48,10 +56,12 @@ void blinkYellowByDistance(double distance) {
  */
 void controlBrightnessByLuminosity(int luminosity) {
   // get luminosity from the photoresistor continously
-
+  int luminosityForLED = getLuminosity();
   // calculate LED brightness in proportion to the luminosity of the room
-
+  double luminosityScaled = luminosityForLED / 4;
   // set brightness of LED according to luminosity
+  double brightness = 255 - luminosityScaled;
+  analogWrite(YELLOW_PIN, brightness);
 }
 
 /**
@@ -60,11 +70,16 @@ void controlBrightnessByLuminosity(int luminosity) {
  * 
  */
 void lockLEDs() {
+  digitalWrite(YELLOW_PIN, LOW);
+  digitalWrite(RED_PIN, LOW);
+  unsigned long timeNow = millis();
   // update LEDState variable to "Locked"
-
+  LEDState = LEDStates[0];
   // blink Red and Yellow LED at a rate of 300 ms
-    //set delay variables
-    //blink LED
+  if (timeNow - lastTimeBlinkedForError > LEDErrorDelay) {
+    digitalWrite(YELLOW_PIN, HIGH);
+    digitalWrite(RED_PIN, HIGH);
+  }
 }
 
 /**
@@ -73,6 +88,7 @@ void lockLEDs() {
  */
 void unlockLEDs() {
   // update LEDState variable to "Unlocked"
-
+  LEDState = LEDStates[1];
   // call 'blinkYellowByDistance' function
+  blinkYellowByDistance(); 
 }
