@@ -68,6 +68,12 @@ double getUltrasonicDistance() {
   return distance;
 }
 
+/**
+ * @brief This method is for toggle on LEDs depending
+ * on the distance an object is from the Ultrasonic
+ * sensor.
+ * 
+ */
 void powerOnLEDs() {
   if (objectDistance > 100) { // distance > 100 cm -> power Green LED
     digitalWrite(GREEN_PIN, HIGH);
