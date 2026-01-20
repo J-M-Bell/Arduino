@@ -22,10 +22,24 @@ void setUpRemote() {
  * 
  */
 void upButtonPressed() {
-  // declare array of available states 
-
-  // add switch statement
-    // depending on current screen switch to next
+  if (LCDState == LCDStates[2]) { // reset default screen -> distance screen
+    if (isCentimeters) {
+      LCDState = LCDStates[3];
+      printDistanceInCentimetersScreen(getDistanceinCentimeters());
+    }
+    else {
+      LCDState = LCDStates[4];
+      printDistanceInInchesScreen(getDistanceinInches());
+    }
+  }
+  else if (LCDState == LCDStates[3] || LCDState == LCDStates[4]) { // distance screen -> luminosity
+    LCDState = LCDStates[5];
+    printLuminosityScreen();
+  }
+  else if (LCDState == LCDStates[5]) { // luminosity -> reset default screen
+    LCDState = LCDStates[2];
+    printDefaultSettingsScreen();
+  }
 }
 
 /**
@@ -34,10 +48,24 @@ void upButtonPressed() {
  * 
  */
 void downButtonPressed(String command, bool isCentimeters) {
-   // declare array of available states 
-
-  // add switch statement
-    // depending on current screen switch to next
+   if (LCDState == LCDStates[2]) { // reset default screen -> distance screen
+    LCDState = LCDStates[5];
+    printLuminosityScreen();
+  }
+  else if (LCDState == LCDStates[3] || LCDState == LCDStates[4]) { // distance screen -> luminosity
+    LCDState = LCDStates[2];
+    printDefaultSettingsScreen();
+  }
+  else if (LCDState == LCDStates[5]) { // luminosity -> reset default screen
+    if (isCentimeters) {
+      LCDState = LCDStates[3];
+      printDistanceInCentimetersScreen(getDistanceinCentimeters());
+    }
+    else {
+      LCDState = LCDStates[4];
+      printDistanceInInchesScreen(getDistanceinInches());
+    }
+  }
 }
 
 /**
@@ -47,10 +75,16 @@ void downButtonPressed(String command, bool isCentimeters) {
  * 
  */
 void changeDefaultSettings() {
-  // 1. get the current state of LCD screen (either cm or in)
-  // 2. switch LCD state using if condition 
-  // 3. call getDistance function depending on new state of LCD 
-  // 4. call the corresponding printDistanceScreen function 
+  if (LCDState == LCDStates[3] && isCentimeter == true) { // switch cm -> inches
+    LCDState = "Distance Inches";
+    isCentimeter = false;
+    printDistanceInInchesScreen(getDistanceinInches());
+  }
+  else if (LCDState == LCDStates[4] && isCentimeter == false) { // switch inches -> cm
+    LCDState = "Distance Inches";
+    isCentimeter = true;
+    printDistanceInCentimetersScreen(getDistanceinCentimeters());
+  }
 }
 
 /**
@@ -61,7 +95,9 @@ void changeDefaultSettings() {
 void resetDefaultSettings() {
   // 1. Get the LCD State
   // 2. Change the LCD State to 'cm'
+  LCDState = LCDState[3];
   // 3. call printDistance LCD screen with distance as cm (default)
+  printDistanceInCentimetersScreen(getDistanceinCentimeters());
 }
 
 /**
