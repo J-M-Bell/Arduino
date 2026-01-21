@@ -14,7 +14,7 @@ LiquidCrystal lcd(RS_PIN, E_PIN, D4_PIN, D5_PIN, D6_PIN, D7_PIN);
 String LCDStates[LCD_SCREEN_COUNT] = {"Error", "Warning", "Reset Default", "Distance CM", "Distance Inches", "Luminosity"}; 
 String LCDState = "";
 
-bool isCentimeters = true;
+byte isInches = 0;
 
 /**
  * @brief Set the Up LCD component.
