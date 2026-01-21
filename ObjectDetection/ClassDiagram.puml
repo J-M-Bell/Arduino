@@ -51,10 +51,11 @@ class UltraSonicSensor
 
 
     #void setUpUltrasonicSensor()
-    #double getDistanceInCentimeters()
-    #double getDistanceInInches()
+    #double getDistance()
     #void lockBot(double distance)
     #void echoPinInterrupt()
+    #double ~getDistanceInCentimeters()
+    #double ~getDistanceInInches()
 }
 
 class LCD
@@ -75,10 +76,12 @@ class LCD
     #void printErrorMessageScreen()
     #void printDefaultMessageScreen()
     #void setDefaultSettings()
-    #void printDistanceinCentimetersScreen(double distance)
-    #void printDistanceInInchesScreen(double distance)
+    #void printDistanceScreen()
     #void printLuminosityScreen(int luminosity)
-    #void printInitializingScreen() 
+    #void printInitializingScreen()
+    #void ~printDistanceinCentimetersScreen(double distance)
+    #void ~printDistanceInInchesScreen(double distance)
+
 
     ' look into printing the loading LCD animation 
 }
