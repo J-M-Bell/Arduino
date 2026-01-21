@@ -8,7 +8,7 @@ int luminosityDelay = 50;
 
 // luminosity average calculation variables
 int counter = 0;
-int total = 0;
+unsigned long total = 0;
 float average;
 int luminosityValues[LUMINOSITY_COUNT];
 
@@ -17,7 +17,7 @@ int luminosityValues[LUMINOSITY_COUNT];
  * 
  */
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 /**
