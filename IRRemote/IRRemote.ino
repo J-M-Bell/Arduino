@@ -3,11 +3,11 @@
 
 // IR Remote button constants
 #define IR_RECEIVE_PIN 5
-#define IR_REMOTE_0 0xC
-#define IR_REMOTE_1 0x10
-#define IR_REMOTE_2 0x11
-#define IR_REMOTE_3 0x12
-#define IR_REMOTE_STOP 0x2
+#define IR_REMOTE_0 0x19
+#define IR_REMOTE_1 0x45
+#define IR_REMOTE_2 0x46
+#define IR_REMOTE_3 0x47
+#define IR_REMOTE_STOP_POUND 0xD
 
 // LCD constants
 #define LCD_RS_PIN A5
@@ -30,6 +30,9 @@ int LEDStates[OUTPUT_PIN_COUNT] = {LOW, LOW, LOW};
 // create LCD object
 LiquidCrystal lcd(LCD_RS_PIN, LCD_E_PIN, LCD_D4_PIN, 
                 LCD_D5_PIN, LCD_D6_PIN, LCD_D7_PIN);
+
+unsigned long clickTimeCounter = millis();
+int buttonTimeDelay = 150;
 
 /**
  * @brief This method prints text to the LCD screen.
@@ -89,7 +92,7 @@ void toggleLEDState(int index) {
  * 
  */
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.setTimeout(10);
   lcd.begin(16, 2);
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
@@ -101,40 +104,45 @@ void setup() {
  * 
  */
 void loop() {
-  if (IrReceiver.decode()) { // if remote button pressed
-    unsigned long command = IrReceiver.decodedIRData.command; // get command from remote
-    Serial.println(command, HEX); 
-    // Serial.println(command, HEX);
-    // IrReceiver.printIRResultShort(&Serial); 
-    // IrReceiver.resume();
-    // Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
-    // Serial.println(IrReceiver.decodedIRData.command);
-    // Serial.println("---");
-    switch (command) {
-      case IR_REMOTE_0: // 0 -> power off all LEDS
-        resetOutputPins();
-        printTextForLCDScreen("'0' Button", 0);
-        printTextForLCDScreen("Power off LEDs", 1);
-        break;
-      case IR_REMOTE_1: // 1 -> power on Red
-        toggleLEDState(0);
-        printTextForLCDScreen("'1' Button", 0);
-        printTextForLCDScreen("Toggle RED", 1);
-        break;
-      case IR_REMOTE_2: // 2 -> power on Yellow
-        toggleLEDState(1);
-        printTextForLCDScreen("'2' Button", 0);
-        printTextForLCDScreen("Toggle YELLOW", 1);
-        break;
-      case IR_REMOTE_3: // 3 -> power on Green
-        toggleLEDState(2);
-        printTextForLCDScreen("'3' Button", 0);
-        printTextForLCDScreen("Toggle GREEN", 1);
-        break;
-      case IR_REMOTE_STOP: // FUNC/STOP -> clear LCD
-        lcd.clear();
-        break;
+  unsigned long timeNow = millis();
+  
+  if (timeNow - clickTimeCounter > buttonTimeDelay) {
+    if (IrReceiver.decode()) { // if remote button pressed
+      unsigned long command = IrReceiver.decodedIRData.command; // get command from remote
+      Serial.println(command, HEX); 
+      // Serial.println(command, HEX);
+      // IrReceiver.printIRResultShort(&Serial); 
+      // IrReceiver.resume();
+      // Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
+      // Serial.println(IrReceiver.decodedIRData.command);
+      // Serial.println("---");
+      switch (command) {
+        case IR_REMOTE_0: // 0 -> power off all LEDS
+          resetOutputPins();
+          printTextForLCDScreen("'0' Button", 0);
+          printTextForLCDScreen("Power off LEDs", 1);
+          break;
+        case IR_REMOTE_1: // 1 -> power on Red
+          toggleLEDState(0);
+          printTextForLCDScreen("'1' Button", 0);
+          printTextForLCDScreen("Toggle RED", 1);
+          break;
+        case IR_REMOTE_2: // 2 -> power on Yellow
+          toggleLEDState(1);
+          printTextForLCDScreen("'2' Button", 0);
+          printTextForLCDScreen("Toggle YELLOW", 1);
+          break;
+        case IR_REMOTE_3: // 3 -> power on Green
+          toggleLEDState(2);
+          printTextForLCDScreen("'3' Button", 0);
+          printTextForLCDScreen("Toggle GREEN", 1);
+          break;
+        case IR_REMOTE_STOP_POUND: // FUNC/STOP -> clear LCD
+          lcd.clear();
+          break;
+      }
+      IrReceiver.resume();
     }
-    IrReceiver.resume();
+   clickTimeCounter = timeNow; 
   }
 }
