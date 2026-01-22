@@ -6,110 +6,119 @@ skinparam groupInheritance 2
 'Classes
 class LED 
 {
-    constants
-    -RED_PIN 12
-    -YELLOW_PIN 11
-    -GREEN_PIN 10
-
-    -String LEDState
-    -String[] LEDStates
-    -unsigned long lastTimeBlinked
-    -int blinkDelay
-
-
-    #void setUpLED(String command)
-    #void blinkYellowByDistance(double distance)
-    #void controlBrightnessByLuminosity(int luminosity)
-    #void lockLEDs()
-    #void unlockLEDs()
-
+    {static} Constants
+    RED_PIN 12
+    YELLOW_PIN 11
+    GREEN_PIN 10
+    ..
+    {static} Variables
+    String LEDState
+    int LEDDelay
+    int LEDErrorDelay
+    unsigned long lastTimeBlinked
+    unsigned long lastTimeBlinkedForError
+    int blinkDelay
+    ..
+    {static} Methods    
+    void blinkYellowByDistance()
+    void controlBrightnessByLuminosity()
+    void lockLEDs()
 }
 
 class PushButton 
 {
-    constants
-    -BUTTON_PIN 2
-    
-    variables
-    -unsigned long debounceTimer
-    -int buttonDelay
-
-    #void setUpPushButton()
-    #void unlockBot()
+    {static} Constants
+    BUTTON_PIN 2
+    ..
+    {static} Variables
+    unsigned long clickTimeCounter
+    int buttonTimeDelay
+    ..
+    {static} Methods
+    void unlockBot()
 }
 
-class UltraSonicSensor
+class UltrasonicSensor
 {
-    constants
-    -ECHO_PIN 4
-    -TRIGGER_PIN 3
-
-    -unsigned long lastTimeSensorTriggered
-    -int sensorDelay
-    -volatile unsigned long pulseStart
-    -volatile unsigned long pulseEnd
-
-
-    #void setUpUltrasonicSensor()
-    #double getDistance()
-    #void lockBot(double distance)
-    #void echoPinInterrupt()
-    #double ~getDistanceInCentimeters()
-    #double ~getDistanceInInches()
+    {static} Constants
+    ECHO_PIN 4
+    TRIGGER_PIN 3
+    ..
+    {static} Variables
+    unsigned long lastTimeSensorTriggered
+    int sensorDelay
+    volatile unsigned long pulseStart
+    volatile unsigned long pulseEnd
+    ..
+    {static} Methods
+    void triggerUltrasonicSensor()
+    double getUltrasonicDistance()
+    void lockBot(double distance)
+    void echoPinInterrupt()
 }
 
 class LCD
 {
-    constants
-    -RS_PIN
-    -E_PIN
-    -D4_PIN
-    -D5_PIN
-    -D6_PIN
-    -D7_PIN
-
-    variables
-    -String[] LCDStates
-    -String LCDState
-
-    #void setUpLCD()
-    #void printErrorMessageScreen()
-    #void printDefaultMessageScreen()
-    #void setDefaultSettings()
-    #void printDistanceScreen()
-    #void printLuminosityScreen(int luminosity)
-    #void printInitializingScreen()
-    #void ~printDistanceinCentimetersScreen(double distance)
-    #void ~printDistanceInInchesScreen(double distance)
-
-
-    ' look into printing the loading LCD animation 
+    {static} Constants
+    RS_PIN A5
+    E_PIN A4
+    D4_PIN 6
+    D5_PIN 7
+    D6_PIN 8
+    D7_PIN 9
+    LCD_SCREEN_COUNT 4
+    ..
+    {static} Variables
+    String[] LCDStates
+    String LCDState
+    LiquidCrystal lcd
+    ..
+    {static} Methods
+    void printScreen()
+    void printErrorMessageScreen()
+    void printDefaultMessageScreen()
+    void printDistanceScreen()
+    void printLuminosityScreen()
+    void printInitializingScreen()
 }
 
 class Photoresistor
 {
-    constants
-    -PHOTORESISTOR_PIN
-
-    #int getLuminosity()
+    {static} Constants
+    PHOTORESISTOR_PIN
+    ..
+    {static} Variables
+    unsigned long lastTimeLuminosityChecked
+    int luminosityDelay
+    ..
+    {static} Methods
+    int getLuminosity()
 }
 
 class Remote
 {
-    constants
-    -PLAY_BUTTON
-    -UP_BUTTON
-    -DOWN_BUTTON
-    -EQ_BUTTON
-    -OFF_BUTTON
+    {static} Constants
+    IR_RECEIVE_PIN 5
+    PLAY_RIGHT_BUTTON 0x5A
+    UP_BUTTON 0x18
+    DOWN_BUTTON 0x52
+    EQ_OK_BUTTON 0x1C
+    OFF_STAR_BUTTON 0x16
+    ..
+    {static} Methods
+    void unlockBot()
+    void upButtonPressed()
+    void downButtonPressed()
+    void changeDefaultSettings()
+    void resetDefaultSettings()
+}
 
-    #void setUpRemote()
-    #void unlockBot()
-    #void upButtonPressed()
-    #void downButtonPressed()
-    #void switchLCDScreens()
-    #void changeDefaultSettings()
-    #void resetDefaultSettings()
-    #void ~printCommands()
-
+class Setup 
+{   
+    {static} Methods
+    void setUpLED()
+    void setUpPushButton()
+    void setUpUltrasonicSensor()
+    void setUpLCD()
+    void setUpRemote()
 }
