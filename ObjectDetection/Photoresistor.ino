@@ -7,5 +7,6 @@
 int getLuminosity() {
   // do analogRead of photoresistor pin
   int luminosity = analogRead(PHOTORESISTOR_PIN);
+  Serial.println(luminosity);
   return luminosity;
 }

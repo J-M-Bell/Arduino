@@ -9,7 +9,9 @@ unsigned long timeNow;
 
 // Debounce button timer variables
 unsigned long clickTimeCounter;
-int buttonTimeDelay = 150;
+int buttonTimeDelay = 10;
+unsigned long readButtonCounter;
+int readButtonDelay = 50;
 
 byte LEDPins[LED_PIN_COUNT] = {RED_PIN, YELLOW_PIN, GREEN_PIN};
 

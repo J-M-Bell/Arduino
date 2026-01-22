@@ -16,11 +16,11 @@ void blinkYellowByDistance() {
   if (isInches == 1) {
     distanceForLED = (distanceForLED * 148.0) / 58.0;
   }
-  Serial.print("Distance is: ");
-  Serial.println(distanceForLED);
-  LEDDelay = 150 - (400 / distanceForLED); // TODO: look into equation
-  Serial.print("LEDDelay is: ");
-  Serial.println(LEDDelay);
+  // Serial.print("Distance is: ");
+  // Serial.println(distanceForLED);
+  LEDDelay = 1600 / (400 / distanceForLED); // TODO: look into equation
+  // Serial.print("LEDDelay is: ");
+  // Serial.println(LEDDelay);
 
   // blink Yellow LED depending on calculated delay
   if (timeNow - lastTimeBlinked > LEDDelay) {

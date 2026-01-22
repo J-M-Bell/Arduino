@@ -86,9 +86,7 @@ void printDistanceScreen() {
     distanceInCentimeters = distance;
   }
   lcd.setCursor(0,0);
-  for (int i = text.length(); i <= 15; i++) { // make sure string has length of 16
-    text += " ";
-  }
+  text = padText(text);
   lcd.print(text);
 
 
@@ -131,6 +129,7 @@ void printLuminosityScreen() {
   lcd.setCursor(0, 0);
   String text = "Luminosity: ";
   text += luminosity;
+  text = padText(text);
   lcd.print(text);
 }
 
@@ -146,4 +145,11 @@ void printInitializingScreen() {
   lcd.setCursor(0, 0);
   String text = "Initializing...";
   lcd.print(text);
+}
+
+String padText(String text) {
+  for (int i = text.length(); i <= 15; i++) { // make sure string has length of 16
+    text += " ";
+  }
+  return text;
 }

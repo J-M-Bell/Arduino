@@ -15,25 +15,28 @@ void loop() {
       if (IrReceiver.decode()) { // if remote button pressed
         unsigned long command = IrReceiver.decodedIRData.command; // get command from remote
         Serial.println(command, HEX);
-        if (command == UP_BUTTON) {
-          upButtonPressed();
-          // Serial.println("Button pressed.");
-        }
-        else if (command == DOWN_BUTTON) {
-          downButtonPressed();
-        }
-        else if (command == OFF_STAR_BUTTON && LCDState == 1) {
-          resetDefaultSettings();
-        }
-        else if (command == EQ_OK_BUTTON && LCDState == 2) {
-          changeDefaultSettings();
+        if (timeNow - readButtonCounter > readButtonDelay) {
+          if (command == UP_BUTTON) {
+            upButtonPressed();
+            // Serial.println("Button pressed.");
+          }
+          else if (command == DOWN_BUTTON) {
+            downButtonPressed();
+          }
+          else if (command == OFF_STAR_BUTTON && LCDState == 1) {
+            resetDefaultSettings();
+          }
+          else if (command == EQ_OK_BUTTON && LCDState == 2) {
+            changeDefaultSettings();
+          }
+          readButtonCounter = timeNow;
         }
         IrReceiver.resume();
       }
       blinkYellowByDistance();
-      clickTimeCounter = timeNow + buttonTimeDelay; 
-      Serial.print("The state is: ");
-      Serial.println(LCDState);
+      clickTimeCounter = timeNow; 
+      // Serial.print("The state is: ");
+      // Serial.println(LCDState);
     }
   }
   else {
@@ -43,13 +46,13 @@ void loop() {
       if (IrReceiver.decode()) { // if remote button pressed
         unsigned long command = IrReceiver.decodedIRData.command; // get command from remote
         Serial.println(command, HEX);
-        if (command == PLAY_RIGHT_BUTTON) {
-          unlockBot();
-          Serial.println("Unlock pressed.");
-        }
+          if (command == PLAY_RIGHT_BUTTON) {
+            unlockBot();
+            Serial.println("Unlock pressed.");
+          }
         IrReceiver.resume();
       }
-      clickTimeCounter = timeNow + buttonTimeDelay;
+      clickTimeCounter = timeNow;
       if (digitalRead(BUTTON_PIN) == HIGH) {
         unlockBot();
       } 
