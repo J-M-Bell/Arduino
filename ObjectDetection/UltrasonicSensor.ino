@@ -1,26 +1,3 @@
-#define ECHO_PIN 3
-#define TRIGGER_PIN 4
-
-unsigned long lastTimeSensorTriggered = micros();
-int sensorDelay;
-volatile unsigned long pulseStart;
-volatile unsigned long pulseEnd;
-
-// Ultrasonic sensor distance variable
-volatile bool newDistanceAvailable = false;
-
-/**
- * @brief Sets up the Ultrasonic Sensor component.
- * 
- */
-void setUpUltrasonicSensor() {
-  pinMode(ECHO_PIN, INPUT);
-  pinMode(TRIGGER_PIN, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(ECHO_PIN),
-                  echoPinInterrupt,
-                  CHANGE);
-}
-
 /**
  * @brief This method triggers the Ultrasonic sensor by
  * sending a signal to it.
@@ -39,47 +16,33 @@ void triggerUltrasonicSensor() {
  * 
  * @return double - distance of the object
  */
-double getUltrasonicDistance(String measurement) {
+double getUltrasonicDistance() {
+  double distance;
+  triggerUltrasonicSensor();
+
   // get duration of pulse
   double pulseDuration = pulseEnd - pulseStart;
-  Serial.print("The pulse duration is: ");
-  Serial.println(pulseDuration);
-  double distance;
-  if (measurement == 'cm') {
+  // Serial.print("The pulse duration is: ");
+  // Serial.println(pulseDuration);
+  
+
+  // calculate distance depending on current measurement
+  if (isInches == 0) {
     distance = pulseDuration / 58.0;
   }
-  else if (measurement == 'in') {
+  // else if (isInches == 1) {
+    
+  // }
+  else {
     distance = pulseDuration / 148.0;
   }
-  else {
-    Serial.print("Incorrect measurement");
-  }
-   // 148.0 in
+
+  // 148.0 in
   // distance = duration * speed
   // 340 m/s --> 0.034 cm/microseconds
   // duration * 0.034
-  return distance;
-}
-
-/**
- * @brief Gets the distance in centimeters from the sensor.
- * 
- * @return double - distance from the ultrasonic sensor.
- */
-double getDistanceinCentimeters() {
-  // call and return 'getUltrasonicDistance' function with 'cm' passed in
-  double distance = getUltrasonicDistance("cm");
-  return distance;
-}
-
-/**
- * @brief Gets the distance in inches from the sensor.
- * 
- * @return double - distance from the ultrasonic sensor.
- */
-double getDistanceinInches() {
-  // call and return 'getUltrasonicDistance' function with 'in' passed in
-  double distance = getUltrasonicDistance("in");
+  // Serial.print("IsInches is: ");
+  // Serial.println(isInches);
   return distance;
 }
 
@@ -87,13 +50,14 @@ double getDistanceinInches() {
  * @brief This method locks the bot if an object has
  * gotten too close to the sensor.
  * 
- * @param distance 
  */
-void lockBot(double distance) {
+void lockBot() {
+  // update LEDState variable to "Locked"
+  lockedMode = true;
   // call 'lockLED' function
-  
-  // call 'printErrorMessageScreen' function
-  printErrorMessageScreen();
+  lockLEDs();
+  // set LCD state
+  LCDState = LCDStates[0];
 }
 
 /**
@@ -102,6 +66,7 @@ void lockBot(double distance) {
  * 
  */
 void echoPinInterrupt() {
+  // get reading from echo pin
   if (digitalRead(ECHO_PIN) == HIGH) {
     pulseStart = micros();
   }

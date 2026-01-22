@@ -1,27 +1,23 @@
-#include <LiquidCrystal.h>
-
-// LCD variables
-#define RS_PIN A5
-#define E_PIN A4
-#define D4_PIN 6
-#define D5_PIN 7
-#define D6_PIN 8
-#define D7_PIN 9
-LiquidCrystal lcd(RS_PIN, E_PIN, D4_PIN, D5_PIN, D6_PIN, D7_PIN);
-#define LCD_SCREEN_COUNT 6
-
-// LCD States variables
-String LCDStates[LCD_SCREEN_COUNT] = {"Error", "Warning", "Reset Default", "Distance CM", "Distance Inches", "Luminosity"}; 
-String LCDState = "";
-
-byte isInches = 0;
-
 /**
- * @brief Set the Up LCD component.
+ * @brief This method is for printing to the LCD screen depending on the
+ * LCDState variable.
  * 
  */
-void setUpLCD() {
-  lcd.begin(16,2);
+void printScreen() {
+  switch (LCDState) {
+    case 0:
+      printErrorMessageScreen();
+      break;
+    case 1:
+      printDefaultSettingsScreen();
+      break;
+    case 2:
+      printDistanceScreen();
+      break;
+    case 3:
+      printLuminosityScreen();
+      break;
+  }
 }
 
 /**
@@ -30,15 +26,13 @@ void setUpLCD() {
  * 
  */
 void printErrorMessageScreen() {
-  lcd.clear();
-
   // print '!!! Obstacle !!!' to first row
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   String text = "!!! Obstacle !!!";
   lcd.print(text);
 
   // print 'Press to unlock.' to second row
-  lcd.setCursor(0, 2);
+  lcd.setCursor(0, 1);
   text = "Press to unlock.";
   lcd.print(text);
 }
@@ -49,61 +43,73 @@ void printErrorMessageScreen() {
  * 
  */
 void printDefaultSettingsScreen() {
-  lcd.clear();
- 
   // print 'Press on OFF to' to first row
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   String text = "Press on OFF to";
   lcd.print(text);
 
   // save 'reset settings.' to a variable 
-  lcd.setCursor(0, 2);
+  lcd.setCursor(0, 1);
   text = "reset settings.";
   lcd.print(text);
 }
 
 /**
- * @brief This method print the distance (in 'cm') of an object in the
+ * @brief This method print the distance of an object in the
  * path of the Ultrasonic sensor.
  * 
- * @param distance - the distance an object is from the sensor.
  */
-void printDistanceInCentimetersScreen(double distance) {
-  lcd.clear();
- 
-  // print 'Dist: {distance}' to first row  
-  lcd.setCursor(0, 1);
-  String text = "Dist: ";
-  text += distance;
-  text += " cm";
-  lcd.print(text);
- 
-  // print 'No obstacle.' to second row
-  lcd.setCursor(0, 2);
-  text = "No obstacle.";
-  lcd.print(text);
-}
+void printDistanceScreen() {
+  double distance;
+  double distanceInCentimeters;
+  
+  // get distance after time delay
+  if (timeNow - lastTimeSensorTriggered > sensorDelay) {
+    distance = getUltrasonicDistance();
+    lastTimeSensorTriggered = timeNow + sensorDelay;
+  }
 
-/**
- * @brief This method print the distance (in inches) of an object in the
- * path of the Ultrasonic sensor.
- * 
- * @param distance - the distance an object is from the sensor.
- */
-void printDistanceInInchesScreen(double distance) {
-  lcd.clear();
- 
-  // print 'Dist: {distance}' to first row  
-  lcd.setCursor(0, 1);
-  String text = "Dist: ";
-  text += distance;
-  text += " in";
+  // Construct text for distance screen
+  String text = "";
+  if (isInches == 1) { // Current measurement: inches
+    // print 'Dist: {distance}' to first row  
+    text = "Dist: ";
+    text += distance;
+    text += " in";
+    distanceInCentimeters = (distance * 148) / 58;
+  }
+  else { // Current measurement: centimeters
+    // print 'Dist: {distance}' to first row  
+    text = "Dist: ";
+    text += distance;
+    text += " cm";
+    distanceInCentimeters = distance;
+  }
+  lcd.setCursor(0,0);
+  for (int i = text.length(); i <= 15; i++) { // make sure string has length of 16
+    text += " ";
+  }
   lcd.print(text);
- 
-  // print 'No obstacle.' to second row
-  lcd.setCursor(0, 2);
-  text = "No obstacle.";
-  lcd.print(text);
+
+
+  // Serial.println(distanceInCentimeters);
+
+  // Show messages and lock the bot depending on the distance of an object
+  if (distanceInCentimeters > 50) {
+    // print 'No obstacle.' to second row
+    lcd.setCursor(0, 1);
+    text = "No obstacle.    ";
+    lcd.print(text);
+  }
+  else if (distanceInCentimeters >= 10 && distanceInCentimeters <= 50) {
+    // print 'No obstacle.' to second row
+    lcd.setCursor(0, 1);
+    text = "!! Warning !!   ";
+    lcd.print(text);
+  }
+  else {
+    lockedMode = true;
+  }
 }
 
 /**
@@ -112,11 +118,17 @@ void printDistanceInInchesScreen(double distance) {
  * 
  * @param luminosity 
  */
-void printLuminosityScreen(int luminosity) {
-  lcd.clear();
- 
+void printLuminosityScreen() {
+  int luminosity;
+
+  // get luminosity after time delay
+  if (timeNow - lastTimeLuminosityChecked > luminosityDelay) {
+    luminosity = getLuminosity();
+    lastTimeLuminosityChecked = timeNow;
+  }
+  
   // print 'Luminosity: {luminosity}' to first row
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   String text = "Luminosity: ";
   text += luminosity;
   lcd.print(text);
@@ -131,6 +143,7 @@ void printInitializingScreen() {
   lcd.clear();
 
   // print 'Initializing...' to LCD
-  lcd.setCursor(0, 1);
+  lcd.setCursor(0, 0);
   String text = "Initializing...";
+  lcd.print(text);
 }

@@ -1,45 +1,19 @@
-#include <IRremote.h>
-
-//Remote constants
-#define IR_RECEIVE_PIN 5
-#define PLAY_BUTTON 0x5
-#define UP_BUTTON 0xA
-#define DOWN_BUTTON 0x8
-#define EQ_BUTTON 0xD
-#define OFF_BUTTON 0x0
-
-/**
- * @brief Set Up Remote component.
- * 
- */
-void setUpRemote() {
-  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
-}
-
 /**
  * @brief This method switches the state of
  * the LCD screen when the up button is pressed.
  * 
  */
 void upButtonPressed() {
-  if (LCDState == LCDStates[2]) { // reset default screen -> distance screen
-    if (isCentimeters) {
-      LCDState = LCDStates[3];
-      printDistanceInCentimetersScreen(getDistanceinCentimeters());
-    }
-    else {
-      LCDState = LCDStates[4];
-      printDistanceInInchesScreen(getDistanceinInches());
-    }
+  if (LCDState == LCDStates[1]) { // reset default screen -> distance screen
+      LCDState = LCDStates[2];
   }
-  else if (LCDState == LCDStates[3] || LCDState == LCDStates[4]) { // distance screen -> luminosity
-    LCDState = LCDStates[5];
-    printLuminosityScreen();
+  else if (LCDState == LCDStates[2]) { // distance screen -> luminosity
+    LCDState = LCDStates[3];
   }
-  else if (LCDState == LCDStates[5]) { // luminosity -> reset default screen
-    LCDState = LCDStates[2];
-    printDefaultSettingsScreen();
+  else if (LCDState == LCDStates[3]) { // luminosity -> reset default screen
+    LCDState = LCDStates[1];
   }
+  lcd.clear();
 }
 
 /**
@@ -47,25 +21,17 @@ void upButtonPressed() {
  * the LCD screen when the down button is pressed.
  * 
  */
-void downButtonPressed(String command, bool isCentimeters) {
-   if (LCDState == LCDStates[2]) { // reset default screen -> distance screen
-    LCDState = LCDStates[5];
-    printLuminosityScreen();
+void downButtonPressed() {
+   if (LCDState == LCDStates[1]) { // reset default screen -> luminosity
+    LCDState = LCDStates[3];
   }
-  else if (LCDState == LCDStates[3] || LCDState == LCDStates[4]) { // distance screen -> luminosity
+  else if (LCDState == LCDStates[3]) { // luminosity -> distance screen
     LCDState = LCDStates[2];
-    printDefaultSettingsScreen();
   }
-  else if (LCDState == LCDStates[5]) { // luminosity -> reset default screen
-    if (isCentimeters) {
-      LCDState = LCDStates[3];
-      printDistanceInCentimetersScreen(getDistanceinCentimeters());
-    }
-    else {
-      LCDState = LCDStates[4];
-      printDistanceInInchesScreen(getDistanceinInches());
-    }
+  else if (LCDState == LCDStates[2]) { // distance screen -> reset default screen
+    LCDState = LCDStates[1];
   }
+  lcd.clear();
 }
 
 /**
@@ -75,16 +41,19 @@ void downButtonPressed(String command, bool isCentimeters) {
  * 
  */
 void changeDefaultSettings() {
-  if (LCDState == LCDStates[3] && isCentimeter == true) { // switch cm -> inches
-    LCDState = "Distance Inches";
-    isCentimeter = false;
-    printDistanceInInchesScreen(getDistanceinInches());
+  if (isInches == 0) { // change to inches
+    isInches = 1;
+    EEPROM.write(SETTINGS_MEMORY_ADDRESS, isInches);
   }
-  else if (LCDState == LCDStates[4] && isCentimeter == false) { // switch inches -> cm
-    LCDState = "Distance Inches";
-    isCentimeter = true;
-    printDistanceInCentimetersScreen(getDistanceinCentimeters());
+  else { // change to centimeters
+    isInches = 0;
+    EEPROM.write(SETTINGS_MEMORY_ADDRESS, isInches);
   }
+
+  // set screen state to distance screen
+  LCDState = LCDStates[2];
+  lcd.clear();
+  // Serial.println("Writing.");
 }
 
 /**
@@ -93,26 +62,11 @@ void changeDefaultSettings() {
  * 
  */
 void resetDefaultSettings() {
-  // 1. Get the LCD State
-  // 2. Change the LCD State to 'cm'
-  LCDState = LCDState[3];
-  // 3. call printDistance LCD screen with distance as cm (default)
-  printDistanceInCentimetersScreen(getDistanceinCentimeters());
+  isInches = 0;
+  EEPROM.write(SETTINGS_MEMORY_ADDRESS, isInches);
+  LCDState = LCDStates[2];
+  lcd.clear();
+  // Serial.println("Writing");
 }
 
-/**
- * @brief This is a helper to determine the command HEX
- * value that corresponds to the button pressed.
- * 
- */
-void printCommands() {
-  Serial.begin(9600);
-  Serial.setTimeout(10);
-  setUpRemote();
-  if (IrReceiver.decode()) {
-    unsigned long command = IrReceiver.decodedIRData.command; // get command from remote
-    Serial.println(command, HEX); 
-    IrReceiver.resume();
-  }
-}
 
