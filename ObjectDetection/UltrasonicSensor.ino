@@ -43,6 +43,11 @@ double getUltrasonicDistance() {
   // duration * 0.034
   // Serial.print("IsInches is: ");
   // Serial.println(isInches);
+  if (distance > 400.0) {
+    distance = previousDistance;
+    return distance;
+  }
+  previousDistance = distance;
   return distance;
 }
 
